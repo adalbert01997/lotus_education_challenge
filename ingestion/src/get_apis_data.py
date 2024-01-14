@@ -11,6 +11,7 @@ import json
 import requests
 import pandas as pd
 from math import floor
+from sqlalchemy import create_engine
 
 # Python Modules
 import constants as C
@@ -88,12 +89,38 @@ def get_school_data(params, page_limit, url):
     # Mostrar el DataFrame
     return df
 
+def insert_into_postgres(*args, **kwargs):
+    """Connects to Postgres instance and uploads incoming Pandas dataframe"""
+    try:
+        host = os.getenv("POSTGRES_SERVICE_NAME")
+        user = os.getenv("POSTGRES_USER")
+        password = os.getenv("POSTGRES_PASSWORD")
+        db = os.getenv("POSTGRES_DB")
+        port = os.getenv("POSTGRES_PORT")
+        engine = create_engine(f"postgresql://{user}:{password}@{host}:{port}/{db}")
+        df = args[0]
+        df.to_sql(
+            con=engine,
+            name="schools",
+            schema=os.getenv("POSTGRES_DEFAULT_SCHEMA"),
+            if_exists="append",
+            index=False,
+        )
+        print("Finished!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    except Exception as e:
+        print(f"ERROR: {e}")
+
 
 def main():
+    print("Get school data")
     university_df = get_school_data(C.UNIVERSITY_PARAMS, C.SCHOOLS_API_PAGE_LIMIT, C.SCHOOLS_ENDPOINT)
+    print(university_df)
+    print("Get cities")
     school_cities = set(university_df.city.tolist())
     city_df = get_city_data(school_cities)
     print(city_df)
+    insert_into_postgres(university_df)
+
 
 
 if __name__ == "__main__":

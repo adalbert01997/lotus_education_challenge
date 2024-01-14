@@ -1,0 +1,41 @@
+# Use postgres/example user/password credentials
+version: '3.2'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: beto
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+    networks:
+      - postgres
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+  centos:
+    build:
+      context: ./ingestion
+      dockerfile: Dockerfile  # Make sure this points to the correct Dockerfile in the context
+    image: centos
+    networks:
+      - postgres
+    depends_on:
+      - db
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python /app/src/get_apis_data.py'
+    environment:
+      - POSTGRES_USER=beto
+      - POSTGRES_PASSWORD=password123
+      - POSTGRES_SERVICE_NAME=db
+      - POSTGRES_DB=postgres
+      - TABLE_NAME=CHANGE
+      - POSTGRES_DEFAULT_SCHEMA=public
+      - POSTGRES_PORT=5432
+      - SCHOOLS_ENDPOINT=https://api.data.gov/ed/collegescorecard/v1/schools
+      - SCHOOLS_API_KEY=DXtfZYbntziqhafyh5oQ5hU1akjSiVk7cvPs9mVK
+      - CITIES_API_ENDPOINT=https://api.api-ninjas.com/v1/city
+      - CITIES_API_KEY=f9hWPLiZB1rfwq5tlGKd8Q==85ZzbHcMeD6lqJgJ
+networks:
+  postgres:
+    driver: bridge
