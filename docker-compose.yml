@@ -24,50 +24,21 @@ services:
     depends_on:
       - db
     command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python /app/src/get_apis_data.py'
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_SERVICE_NAME=${POSTGRES_SERVICE_NAME}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - SCHOOLS_TABLE_NAME=${SCHOOLS_TABLE_NAME}
-      - CITIES_TABLE_NAME=${CITIES_TABLE_NAME}
-      - POSTGRES_DEFAULT_SCHEMA=${POSTGRES_DEFAULT_SCHEMA}
-      - POSTGRES_PORT=${POSTGRES_PORT}
-      - SCHOOLS_ENDPOINT=${SCHOOLS_ENDPOINT}
-      - SCHOOLS_API_KEY=${SCHOOLS_API_KEY}
-      - CITIES_API_ENDPOINT=${CITIES_API_ENDPOINT}
-      - CITIES_API_KEY=${CITIES_API_KEY}
+    env_file:
+      - .env
   load_to_rds:
     image: centos
     build:
       context: ./etl
-      dockerfile: Dockerfile  # Make sure this points to the correct Dockerfile in the context
+      dockerfile: Dockerfile
     networks:
       - postgres
     depends_on:
       - db
       - ingest_from_apis
     command: bash -c 'sleep 60; python /app/src/load_to_rds.py'
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_SERVICE_NAME=${POSTGRES_SERVICE_NAME}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - SCHOOLS_TABLE_NAME=${SCHOOLS_TABLE_NAME}
-      - CITIES_TABLE_NAME=${CITIES_TABLE_NAME}
-      - POSTGRES_DEFAULT_SCHEMA=${POSTGRES_DEFAULT_SCHEMA}
-      - POSTGRES_PORT=${POSTGRES_PORT}
-      - SCHOOLS_ENDPOINT=${SCHOOLS_ENDPOINT}
-      - SCHOOLS_API_KEY=${SCHOOLS_API_KEY}
-      - CITIES_API_ENDPOINT=${CITIES_API_ENDPOINT}
-      - CITIES_API_KEY=${CITIES_API_KEY}
-      - RDS_HOSTNAME=lotus-db.c3e4qkoosswu.us-east-1.rds.amazonaws.com
-      - RDS_USER=beto
-      - RDS_PASSWORD=pasword123
-      - RDS_PORT=5432
-      - RDS_DB=postgres
-      - RDS_SCHOOLS_TABLE_NAME=rds_schools
-      - RDS_CITIES_TABLE_NAME=rds_cities
+    env_file:
+      - .env
 networks:
   postgres:
     driver: bridge
