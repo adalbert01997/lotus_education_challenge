@@ -1,3 +1,5 @@
 - Normalizar tablas (funciones de validaciones de columnas antes de escribir a RDS)
 - Leer tablas de RDS desde Glue Job (SparkSQL)
 - Leer tablas de RDS desde Zeppelin Notebook (Pandas)
+- Documentacion (README.md)
+- Docstrings

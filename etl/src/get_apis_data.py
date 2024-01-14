@@ -20,8 +20,8 @@ import constants as C
 def get_city_data(cities):
     city_data = []
     for city in cities:
-        api_url = f'{C.CITIES_API_ENDPOINT}?name={city}' 
-        response = requests.get(api_url, headers={'X-Api-Key': C.CITIES_API_KEY})
+        api_url = f"{C.CITIES_API_ENDPOINT}?name={city}"
+        response = requests.get(api_url, headers={"X-Api-Key": C.CITIES_API_KEY})
         if response.status_code == requests.codes.ok:
             print(response.text)
             if len(json.loads(response.text)) > 0:
@@ -31,6 +31,7 @@ def get_city_data(cities):
     df = pd.DataFrame(city_data)
     pd.set_option("display.max_columns", None)
     return df
+
 
 def get_school_data(params, page_limit, url):
     # Inicializar una lista para almacenar los resultados
@@ -89,6 +90,7 @@ def get_school_data(params, page_limit, url):
     # Mostrar el DataFrame
     return df
 
+
 def insert_into_postgres(data):
     """Connects to Postgres instance and uploads incoming Pandas dataframe"""
     try:
@@ -113,11 +115,17 @@ def insert_into_postgres(data):
 
 
 def main():
-    university_df = get_school_data(C.UNIVERSITY_PARAMS, C.SCHOOLS_API_PAGE_LIMIT, C.SCHOOLS_ENDPOINT)
+    university_df = get_school_data(
+        C.UNIVERSITY_PARAMS, C.SCHOOLS_API_PAGE_LIMIT, C.SCHOOLS_ENDPOINT
+    )
     school_cities = set(university_df.city.tolist())
     city_df = get_city_data(school_cities)
-    insert_into_postgres([[university_df, os.getenv("SCHOOLS_TABLE_NAME")], [city_df, os.getenv("CITIES_TABLE_NAME")]])
-
+    insert_into_postgres(
+        [
+            [university_df, os.getenv("SCHOOLS_TABLE_NAME")],
+            [city_df, os.getenv("CITIES_TABLE_NAME")],
+        ]
+    )
 
 
 if __name__ == "__main__":
