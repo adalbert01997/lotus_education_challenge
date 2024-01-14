@@ -5,9 +5,9 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_USER: beto
-      POSTGRES_PASSWORD: password123
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - 5432:5432
     networks:
@@ -25,17 +25,18 @@ services:
       - db
     command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python /app/src/get_apis_data.py'
     environment:
-      - POSTGRES_USER=beto
-      - POSTGRES_PASSWORD=password123
-      - POSTGRES_SERVICE_NAME=db
-      - POSTGRES_DB=postgres
-      - TABLE_NAME=CHANGE
-      - POSTGRES_DEFAULT_SCHEMA=public
-      - POSTGRES_PORT=5432
-      - SCHOOLS_ENDPOINT=https://api.data.gov/ed/collegescorecard/v1/schools
-      - SCHOOLS_API_KEY=DXtfZYbntziqhafyh5oQ5hU1akjSiVk7cvPs9mVK
-      - CITIES_API_ENDPOINT=https://api.api-ninjas.com/v1/city
-      - CITIES_API_KEY=f9hWPLiZB1rfwq5tlGKd8Q==85ZzbHcMeD6lqJgJ
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_SERVICE_NAME=${POSTGRES_SERVICE_NAME}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - SCHOOLS_TABLE_NAME=${SCHOOLS_TABLE_NAME}
+      - CITIES_TABLE_NAME=${CITIES_TABLE_NAME}
+      - POSTGRES_DEFAULT_SCHEMA=${POSTGRES_DEFAULT_SCHEMA}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - SCHOOLS_ENDPOINT=${SCHOOLS_ENDPOINT}
+      - SCHOOLS_API_KEY=${SCHOOLS_API_KEY}
+      - CITIES_API_ENDPOINT=${CITIES_API_ENDPOINT}
+      - CITIES_API_KEY=${CITIES_API_KEY}
 networks:
   postgres:
     driver: bridge
