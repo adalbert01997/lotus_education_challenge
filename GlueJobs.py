@@ -26,11 +26,27 @@ PostgreSQL_node1705305162915 = glueContext.create_dynamic_frame.from_options(
     },
     transformation_ctx="PostgreSQL_node1705305162915",
 )
+# Lectura de datos completada
 print("Lectura de datos completada.")
+
 # Convierte a DataFrame de Spark y muestra los resultados
 df = PostgreSQL_node1705305162915.toDF()
 print(df.show(truncate=False))
-print(df)
+
+# Registra el DataFrame como una tabla temporal
+df.createOrReplaceTempView("temp_table")
+
+# Ejecuta una consulta SQL en la tabla temporal
+consulta_sql = "SELECT name, city FROM temp_table"
+df_resultado = spark.sql(consulta_sql)
+
+
+# Ejecuta una consulta SQL en el DataFrame
+df_resultado = spark.sql(consulta_sql)
+
+# Muestra el resultado de la consulta
+print("Resultado de la consulta SQL:")
+print(df_resultado.show(truncate=False))
 
 # Muestra información adicional
 print("Número total de filas:", df.count())
