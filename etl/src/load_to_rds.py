@@ -163,7 +163,7 @@ def main():
     s_df = read_postgres_table_to_dataframe(os.getenv("SCHOOLS_TABLE_NAME"))
     c_df = read_postgres_table_to_dataframe(os.getenv("CITIES_TABLE_NAME"))
     s_df = add_updated_at_column(s_df)
-    city_df = add_updated_at_column(c_df)
+    c_df = add_updated_at_column(c_df)
     print("Antes de la normalizacion")
     print(s_df)
     print(c_df)
