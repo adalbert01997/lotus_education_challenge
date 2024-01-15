@@ -80,11 +80,84 @@ def add_updated_at_column(df):
     return df
 
 
+def normalization_cities_table(df):
+    # Eliminar filas con datos vacíos
+    df = df.dropna()
+
+    # Verificar y corregir la primera letra de cada palabra en la columna "name"
+    df["name"] = df["name"].apply(
+        lambda x: " ".join(word.capitalize() for word in x.split())
+    )
+
+    # Verificar y convertir la columna "latitude" a float
+    df["latitude"] = pd.to_numeric(df["latitude"], errors="coerce")
+
+    # Verificar y convertir la columna "longitude" a float
+    df["longitude"] = pd.to_numeric(df["longitude"], errors="coerce")
+
+    # Eliminar filas en las que la columna "country" no sea 'US'
+    df = df[df["country"] == "US"]
+
+    # Convertir la columna "population" a tipo string y cambiar el punto por coma
+    df["population"] = df["population"].astype(str).str.replace(".", ",")
+
+    # Convertir la columna "updated_at" a tipo de dato datetime
+    df["updated_at"] = pd.to_datetime(df["updated_at"]).dt.floor("T")
+
+    return df
+
+
+def normalization_schools_table(df):
+    # Eliminar filas con datos vacíos
+    df = df.dropna()
+
+    # Verificar y eliminar filas con id repetido
+    df = df.drop_duplicates(subset="id", keep="first")
+
+    # Verificar y corregir la primera letra de cada palabra en la columna "city"
+    df["city"] = df["city"].apply(
+        lambda x: " ".join(word.capitalize() for word in x.split())
+    )
+
+    # Convertir la columna 'zip' a tipo string y luego eliminar puntos
+    df["zip"] = df["zip"].astype(str).str.replace(".", "")
+
+    # Verificar y corregir la columna "url"
+    df["url"] = df["url"].apply(
+        lambda x: "https://" + x if not x.startswith("https://") else x
+    )
+
+    # Convertir las siguientes columnas a tipo de dato integer
+    int_columns = [
+        "ownership",
+        "main_campus",
+        "online_only",
+        "open_admissions_policy",
+        "degrees_awarded_predominant",
+        "degrees_awarded_predominant_recoded",
+    ]
+
+    # Convertir a tipo de dato numérico antes de la conversión a entero
+    for col in int_columns:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+
+    # Convertir la columna "updated_at" a tipo de dato datetime y eliminar los segundos
+    df["updated_at"] = pd.to_datetime(df["updated_at"]).dt.floor("T")
+
+    return df
+
+
 def main():
     school_df = read_postgres_table_to_dataframe(os.getenv("SCHOOLS_TABLE_NAME"))
     city_df = read_postgres_table_to_dataframe(os.getenv("CITIES_TABLE_NAME"))
     school_df = add_updated_at_column(school_df)
     city_df = add_updated_at_column(city_df)
+    print("Antes de la normalizacion")
+    print(school_df)
+    print(city_df)
+    print("Despues de la normalizacion:")
+    school_df = normalization_schools_table(school_df)
+    city_df = normalization_cities_table(city_df)
     print(school_df)
     print(city_df)
     insert_into_rds(
