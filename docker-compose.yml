@@ -36,7 +36,7 @@ services:
     depends_on:
       - db
       - ingest_from_apis
-    command: bash -c 'sleep 60; python /app/src/load_to_rds.py'
+    command: bash -c 'sleep 70; python /app/src/load_to_rds.py'
     env_file:
       - .env
 networks:

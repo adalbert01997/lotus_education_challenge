@@ -32,7 +32,7 @@ def insert_into_rds(data):
                 con=engine,
                 name=table_name,
                 # schema=os.getenv("POSTGRES_DEFAULT_SCHEMA"),
-                if_exists="append",
+                if_exists="replace",
                 index=False,
             )
         print("Finished!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
@@ -148,22 +148,22 @@ def normalization_schools_table(df):
 
 
 def main():
-    school_df = read_postgres_table_to_dataframe(os.getenv("SCHOOLS_TABLE_NAME"))
-    city_df = read_postgres_table_to_dataframe(os.getenv("CITIES_TABLE_NAME"))
-    school_df = add_updated_at_column(school_df)
-    city_df = add_updated_at_column(city_df)
+    s_df = read_postgres_table_to_dataframe(os.getenv("SCHOOLS_TABLE_NAME"))
+    c_df = read_postgres_table_to_dataframe(os.getenv("CITIES_TABLE_NAME"))
+    s_df = add_updated_at_column(s_df)
+    city_df = add_updated_at_column(c_df)
     print("Antes de la normalizacion")
-    print(school_df)
-    print(city_df)
+    print(s_df)
+    print(c_df)
     print("Despues de la normalizacion:")
-    school_df = normalization_schools_table(school_df)
-    city_df = normalization_cities_table(city_df)
-    print(school_df)
-    print(city_df)
+    s_df = normalization_schools_table(s_df)
+    c_df = normalization_cities_table(c_df)
+    print(s_df)
+    print(c_df)
     insert_into_rds(
         [
-            [school_df, os.getenv("RDS_SCHOOLS_TABLE_NAME")],
-            [city_df, os.getenv("RDS_CITIES_TABLE_NAME")],
+            [s_df, os.getenv("RDS_SCHOOLS_TABLE_NAME")],
+            [c_df, os.getenv("RDS_CITIES_TABLE_NAME")],
         ]
     )
 
