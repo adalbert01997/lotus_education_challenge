@@ -2,7 +2,7 @@
  
 ## Este proyecto consistente en conectarse a una [RESTAPI](https://www.redhat.com/en/topics/api/what-is-a-rest-api), montar una base de datos local, después normalizarla y subirla a [AWS]( https://us-east-1.console.aws.amazon.com/rds/home?region=us-east-1). Usar herramientas como [Zeppelin]( https://zeppelin.apache.org/) para mostrar la normalización, así como Apache Spark para hacer consultas SQL.  
 
-La arquitectura se desarrolló usando [Docker-compose](https://docs.docker.com/compose/) a través de tres servicios de contenedores. El primero es un contenedor con imagen de: Postgres, esto nos permite crear rápidamente una completa y operativa base de datos. El segundo servicio fue  con la imagen CetOs Linux donde bajamos la información de las apis, para poderlas ingestar a las bases de datos. Por último, se utilizo una segunda imagen CentOS que nos permitía pasar los datos normalizados a la base de datos de AWS. 
+La arquitectura se desarrolló usando [Docker-compose](https://docs.docker.com/compose/) a través de tres servicios de contenedores. El primero es un contenedor con imagen de: Postgres, esto nos permite crear rápidamente una completa y operativa base de datos. El segundo servicio fue  con la imagen [CentOS](https://www.centos.org/) Linux donde bajamos la información de las apis, para poderlas ingestar a las bases de datos. Por último, se utilizo una segunda imagen [CentOS](https://www.centos.org/) que nos permitía pasar los datos normalizados a la base de datos de AWS. 
 
 ## Requerimientos: 
 * [Docker](https://docs.docker.com/get-docker/)
