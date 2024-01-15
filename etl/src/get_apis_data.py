@@ -18,6 +18,10 @@ import constants as C
 
 
 def get_city_data(cities):
+    """
+    get_citie_data recibe como parametro un df de escuelas obtiene la columna city y genera un df de la informacion de las ciudades a través de una API
+
+    """
     city_data = []
     for city in cities:
         api_url = f"{C.CITIES_API_ENDPOINT}?name={city}"
@@ -34,6 +38,9 @@ def get_city_data(cities):
 
 
 def get_school_data(params, page_limit, url):
+    """
+    get_school_data recibe parametros para la conexión con la API, un limite de paginas para que no traiga toda la informacion, y el url del endpoint.
+    """
     # Inicializar una lista para almacenar los resultados
     results_list = []
     while True:

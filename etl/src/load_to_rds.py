@@ -41,6 +41,9 @@ def insert_into_rds(data):
 
 
 def read_postgres_table_to_dataframe(table_name):
+    """
+    Transforma una tabla a un df
+    """
     try:
         # Obtener variables de entorno
         host = os.getenv("POSTGRES_SERVICE_NAME")
@@ -71,6 +74,9 @@ def read_postgres_table_to_dataframe(table_name):
 
 
 def add_updated_at_column(df):
+    """
+    añade la columna de tiempo a un df
+    """
     # Obtén la fecha y hora actual
     current_datetime = datetime.now()
 
@@ -81,6 +87,9 @@ def add_updated_at_column(df):
 
 
 def normalization_cities_table(df):
+    """
+    Recibe un df y lo normaliza segun sus especficaciones
+    """
     # Eliminar filas con datos vacíos
     df = df.dropna()
 
@@ -108,6 +117,9 @@ def normalization_cities_table(df):
 
 
 def normalization_schools_table(df):
+    """
+    Recibe un df y lo normaliza segun sus especficaciones
+    """
     # Eliminar filas con datos vacíos
     df = df.dropna()
 
